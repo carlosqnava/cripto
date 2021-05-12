@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 # import filedialog module
@@ -12,24 +13,25 @@ class Interfaz:
 
         frame = LabelFrame(self.wind, text="Criptografía Simétrica", font=("Calibri", 14))
 
-        
+        ruta = tk.StringVar()
         # inicio 
         lblArchivo = Label(frame,text="Archivo", font=("Calibri", 14))
         lblArchivo.grid(column=0,row=0, padx=150)
 
-        rutaArchivo = ttk.Entry(frame, width=30)
+        rutaArchivo = ttk.Entry(frame, width=50, textvariable=ruta)
         rutaArchivo.grid(column=0,row=1, pady=20)
         
             
         def browseFiles():
             filename = filedialog.askopenfilename(initialdir = "/",
                                                 title = "Select a File",
-                                                filetypes = (("Text files",
-                                                                "*.txt*"),
-                                                            ("all files",
-                                                                "*.*")))
+                                                filetypes = (("all files",
+                                                                "*.*"),("Text files",
+                                                                "*.txt*")
+                                                            ))
             
-            # Change label contents
+            ruta.set(filename)
+            
             return filename
 
             
