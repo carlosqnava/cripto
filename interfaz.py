@@ -1,3 +1,4 @@
+from cifrados import Cifrados
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
@@ -33,6 +34,7 @@ class Interfaz:
             ruta.set(filename)
             
             return filename
+
 
             
         botonBuscarArchivo = ttk.Button(frame, text="Buscar", command=browseFiles)
@@ -81,13 +83,19 @@ class Interfaz:
         lblOpcionRadio = ttk.Label(frame, textvariable=radioValue)
         lblOpcionRadio.grid(column=1, row=6, sticky="E")
 
-        btnEjecutar = ttk.Button(frame, text="Ejecutar", width=50)
+        def cifrar():
+            Cifrados.rc4('Secret', 'Attack at dawn')
+            
+
+        btnEjecutar = ttk.Button(frame, text="Ejecutar", width=50, command=cifrar)
         btnEjecutar.grid(column=0,row=7)
 
 
         print(comboAlgoritmos.current(), comboAlgoritmos.get()) #obtiene los datos del combo seleccionado
 
         frame.pack(fill="both", expand="yes", padx=20, pady=10)
+
+
 
         
 
