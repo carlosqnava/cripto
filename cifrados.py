@@ -1,6 +1,6 @@
 import codecs
 class Cifrados:
-    def rc4(key, plaintext, action):
+    def rc4(key, file, action):
         
 
 
@@ -92,41 +92,40 @@ class Cifrados:
             return codecs.decode(res, 'hex_codec').decode('utf-8')
 
 
-            
-
-
-        def test():
-
-            # Test case 1
-            # key = '4B6579' # 'Key' in hex
-            # key = 'Key'
-            # plaintext = 'Plaintext'
-            # ciphertext = 'BBF316E8D940AF0AD3'
-            assert(encrypt('Key', 'Plaintext')) == 'BBF316E8D940AF0AD3'
-            assert(decrypt('Key', 'BBF316E8D940AF0AD3')) == 'Plaintext'
-
-            # Test case 2
-            # key = 'Wiki' # '57696b69'in hex
-            # plaintext = 'pedia'
-            # ciphertext should be 1021BF0420
-            assert(encrypt('Wiki', 'pedia')) == '1021BF0420'
-            assert(decrypt('Wiki', '1021BF0420')) == 'pedia'
-
-            # Test case 3
-            # key = 'Secret' # '536563726574' in hex
-            # plaintext = 'Attack at dawn'
-            # ciphertext should be 45A01F645FC35B383552544B9BF5
-            assert(encrypt('Secret',
-                        'Attack at dawn')) == '45A01F645FC35B383552544B9BF5'
-            assert(decrypt('Secret',
-                        '45A01F645FC35B383552544B9BF5')) == 'Attack at dawn'
+        
 
         
         MOD = 256
 
         # encrypt the plaintext, using key and RC4 algorithm
+        nombreArchivo = ''
+        charIdx = 0
+        rutaStr=file 
+        while(rutaStr.find('/',charIdx,-1)!=-1):
+            charIdx = rutaStr.find('/',charIdx,-1) +1
+            # print(charIdx)
+
+        nombreArchivo = rutaStr[charIdx:len(rutaStr)]
+        
+        
+        
+        extension = nombreArchivo[nombreArchivo.find('.'):len(nombreArchivo)] 
+        nombreNuevo = nombreArchivo[0:nombreArchivo.find('.')]
+       
         if(action == 'descifrar'):
-            return encrypt(key, plaintext)
+            nombreNuevo = nombreNuevo + '-desc'+extension
+            f = open (file,'wb')
+            file2 = file
+            
+            file2.replace('')
+            f = open (file,'wb')
+
+            mensaje = f.read()
+
+            f.write('hola mundo')
+            f.close()
+            return encrypt(key, file)
         else:
-            return decrypt(key, plaintext)
+            nombreNuevo = nombreNuevo + '-cif'+extension 
+            return decrypt(key, file)
         

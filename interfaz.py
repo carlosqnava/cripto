@@ -70,7 +70,7 @@ class Interfaz:
         inputLlave = ttk.Entry(frame, width=30)
         inputLlave.grid(column=1,row=4)
 
-        radioValue = 0 
+        radioValue = tk.StringVar()
 
         radioCifrar = ttk.Radiobutton(frame, text='Cifrar',
                              variable=radioValue, value='cifrar') 
@@ -83,15 +83,22 @@ class Interfaz:
         lblOpcionRadio = ttk.Label(frame, textvariable=radioValue)
         lblOpcionRadio.grid(column=1, row=6, sticky="E")
 
-        def cifrar():
-            Cifrados.rc4('Secret', 'Attack at dawn')
+        def ejecutar():
+            # print(inputLlave.get())
+            
+            # print(radioValue.get())
+            # print(comboAlgoritmos.get())
+            
+            if comboAlgoritmos.get() == 'DES':
+
+                Cifrados.rc4(inputLlave.get(), ruta.get(), radioValue.get())
             
 
-        btnEjecutar = ttk.Button(frame, text="Ejecutar", width=50, command=cifrar)
+        btnEjecutar = ttk.Button(frame, text="Ejecutar", width=50, command=ejecutar)
         btnEjecutar.grid(column=0,row=7)
 
 
-        print(comboAlgoritmos.current(), comboAlgoritmos.get()) #obtiene los datos del combo seleccionado
+        # print(comboAlgoritmos.current(), comboAlgoritmos.get()) #obtiene los datos del combo seleccionado
 
         frame.pack(fill="both", expand="yes", padx=20, pady=10)
 
