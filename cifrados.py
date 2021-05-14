@@ -113,19 +113,38 @@ class Cifrados:
         nombreNuevo = nombreArchivo[0:nombreArchivo.find('.')]
        
         if(action == 'descifrar'):
-            nombreNuevo = nombreNuevo + '-desc'+extension
-            f = open (file,'wb')
             file2 = file
+            nombreNuevo = nombreNuevo + '-desc'+extension
+            file2 = file2.replace(nombreArchivo, nombreNuevo)
+            archivoPlano = open (file,'r')
+            archivoCifrado = open(file2, 'w')
+            Lines = archivoPlano.readlines()
+ 
+            count = 0
+            # Strips the newline character
+            for line in Lines:
+                count += 1
+                
+                archivoCifrado.write(decrypt(key, line.strip())+'\n')
+
+            archivoCifrado.close()
+            archivoPlano.close()
             
-            file2.replace('')
-            f = open (file,'wb')
-
-            mensaje = f.read()
-
-            f.write('hola mundo')
-            f.close()
-            return encrypt(key, file)
         else:
-            nombreNuevo = nombreNuevo + '-cif'+extension 
-            return decrypt(key, file)
-        
+            
+            file2 = file
+            nombreNuevo = nombreNuevo + '-cif'+extension
+            file2 = file2.replace(nombreArchivo, nombreNuevo)
+            archivoPlano = open (file,'r')
+            archivoCifrado = open(file2, 'w')
+            Lines = archivoPlano.readlines()
+ 
+            count = 0
+            # Strips the newline character
+            for line in Lines:
+                count += 1
+                
+                archivoCifrado.write(encrypt(key, line)+'\n')
+
+            archivoCifrado.close()
+            archivoPlano.close()
