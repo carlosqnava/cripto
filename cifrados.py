@@ -1,9 +1,12 @@
 import codecs
+from Crypto.Cipher import DES
+from Crypto.Cipher import AES
+from tkinter import messagebox
+
 class Cifrados:
-    def rc4(key, file, action):
+    
         
-
-
+    def rc4(key, plaintext,accion):
         def KSA(key):
             ''' Key Scheduling Algorithm (from wikipedia):
                 for i from 0 to 255
@@ -87,20 +90,31 @@ class Cifrados:
             ''' :key -> encryption key used for encrypting, as hex string
                 :ciphertext -> hex encoded ciphered text using RC4
             '''
-            ciphertext = codecs.decode(ciphertext, 'hex_codec')
-            res = encrypt_logic(key, ciphertext)
-            return codecs.decode(res, 'hex_codec').decode('utf-8')
+            try:
+                ciphertext = codecs.decode(ciphertext, 'hex_codec')
+                res = encrypt_logic(key, ciphertext)
+                return codecs.decode(res, 'hex_codec').decode('utf-8')
 
+            except:
+                messagebox.showerror(message="No puedo descifrar un archivo que no haya sido cifrado anteriormente", title="Error")
+                return False
+            
 
         
 
         
         MOD = 256
+        if accion == 'cifrar':
+            print(encrypt(key, plaintext))
+            return encrypt(key, plaintext)
+        else:
+            return decrypt(key, plaintext)
+        
 
-        # encrypt the plaintext, using key and RC4 algorithm
+    def cifrar(llave, archivo, accion, algoritmo):
         nombreArchivo = ''
         charIdx = 0
-        rutaStr=file 
+        rutaStr=archivo 
         while(rutaStr.find('/',charIdx,-1)!=-1):
             charIdx = rutaStr.find('/',charIdx,-1) +1
             # print(charIdx)
@@ -112,39 +126,97 @@ class Cifrados:
         extension = nombreArchivo[nombreArchivo.find('.'):len(nombreArchivo)] 
         nombreNuevo = nombreArchivo[0:nombreArchivo.find('.')]
        
-        if(action == 'descifrar'):
-            file2 = file
+        if(accion == 'descifrar'):
+            archivo2 = archivo
             nombreNuevo = nombreNuevo + '-desc'+extension
-            file2 = file2.replace(nombreArchivo, nombreNuevo)
-            archivoPlano = open (file,'r')
-            archivoCifrado = open(file2, 'w')
+            archivo2 = archivo2.replace(nombreArchivo, nombreNuevo)
+            archivoPlano = open (archivo,'r')
+            archivoCifrado = open(archivo2, 'w')
+            
+            if algoritmo == 'AES-128':
+                if len(llave)%16 == 0:
+                    archivoPlano = open(archivo, "rb")
+                    nonce,tag, ciphertext = [ archivoPlano.read(x) for x in (16, 16, -1) ]
+                    # let's assume that the key is somehow available again
+                    cipher = AES.new(llave.encode("utf8"), AES.MODE_EAX, nonce)
+                    data = cipher.decrypt(ciphertext)
+                    archivoCifrado.write(str(data)+"\n")
+                
+                    return nombreNuevo
+                else:
+                    messagebox.showerror(message="La longitud de la llave debe ser un multiplo de 16", title="Error")
+                    return False
+        
             Lines = archivoPlano.readlines()
  
             count = 0
             # Strips the newline character
             for line in Lines:
                 count += 1
-                
-                archivoCifrado.write(decrypt(key, line.strip())+'\n')
+                if algoritmo == 'RC4':
+                    if(Cifrados.rc4(llave, line.strip(),accion)!=False):
+                        archivoCifrado.write(Cifrados.rc4(llave, line.strip(), accion)+'\n')
+                    else:
+                        return False
+                elif algoritmo == 'DES':
+                    if len(llave)%8 == 0:
 
+                        cipher = DES.new(llave.encode("utf8"), DES.MODE_OFB)
+                        msg = cipher.iv + cipher.decrypt(line.encode("utf8"))
+                        print(msg)
+                        archivoCifrado.write(str(msg)+"\n")
+                    else:
+                        messagebox.showerror(message="La longitud de la llave debe ser un multiplo de 8", title="Error")
+                        return False
+
+                
             archivoCifrado.close()
             archivoPlano.close()
+            return nombreNuevo
             
         else:
             
-            file2 = file
+            archivo2 = archivo
             nombreNuevo = nombreNuevo + '-cif'+extension
-            file2 = file2.replace(nombreArchivo, nombreNuevo)
-            archivoPlano = open (file,'r')
-            archivoCifrado = open(file2, 'w')
+            archivo2 = archivo2.replace(nombreArchivo, nombreNuevo)
+            archivoPlano = open (archivo,'r')
+            archivoCifrado = open(archivo2, 'w')
             Lines = archivoPlano.readlines()
- 
+
             count = 0
+            if algoritmo == 'AES-128':
+                archivoCifrado = open(archivo2, 'wb')
             # Strips the newline character
             for line in Lines:
                 count += 1
-                
-                archivoCifrado.write(encrypt(key, line)+'\n')
+                if algoritmo == 'RC4':
+                    if(Cifrados.rc4(llave, line.strip(),accion)!=False):
+                        archivoCifrado.write(Cifrados.rc4(llave, line.strip(), accion)+'\n')
+                    else:
+                        return False
+                elif algoritmo == 'DES':
+                    if len(llave)%8 == 0:
+                        cipher = DES.new(llave.encode("utf8"), DES.MODE_OFB)
+                        msg = cipher.iv + cipher.encrypt(line.encode("utf8"))
+                        print(msg)
+                        archivoCifrado.write(str(msg)+"\n")
+                    else:
+                        messagebox.showerror(message="La longitud de la llave debe ser un multiplo de 8", title="Error")
+                        return False
+                elif algoritmo == 'AES-128':
+                    
+                    if len(llave)%16 == 0:
+                        cipher = AES.new(llave.encode("utf8"), AES.MODE_EAX)
+                        ciphertext= cipher.encrypt(line.encode("utf8"))
 
+                        
+                        [ archivoCifrado.write(x) for x in (cipher.nonce, ciphertext) ]
+                    else:
+                        messagebox.showerror(message="La longitud de la llave debe ser un multiplo de 16", title="Error")
+                        return False
+
+            
             archivoCifrado.close()
             archivoPlano.close()
+            return nombreNuevo
+        

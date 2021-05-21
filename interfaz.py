@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import *
 # import filedialog module
 from tkinter import filedialog
+from tkinter import messagebox
 
 class Interfaz:
 
@@ -89,9 +90,14 @@ class Interfaz:
             # print(radioValue.get())
             # print(comboAlgoritmos.get())
             
-            if comboAlgoritmos.get() == 'DES':
+            
 
-                Cifrados.rc4(inputLlave.get(), ruta.get(), radioValue.get())
+
+            nombreArchivo = Cifrados.cifrar(inputLlave.get(), ruta.get(), radioValue.get(), comboAlgoritmos.get())
+            if (nombreArchivo!=False):
+                nombreArchivo = 'Se ha generado el archivo '+nombreArchivo+' con éxito'
+                messagebox.showinfo(message=nombreArchivo, title="Exito al "+radioValue.get())
+            
             
 
         btnEjecutar = ttk.Button(frame, text="Ejecutar", width=50, command=ejecutar)
